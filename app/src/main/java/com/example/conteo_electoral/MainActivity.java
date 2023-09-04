@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 mostrarMensaje("El elector es menor de edad.");
             } else {
                 electoresRestantes--;
-                //solicitarVoto();
+                solicitarVoto();
             }
         });
 
@@ -77,5 +77,73 @@ public class MainActivity extends AppCompatActivity {
 
     private void mostrarMensaje(String mensaje) {
         textViewResultado.setText(mensaje);
+    }
+
+    // Metodo para solicitar voto a los usuarios
+    private void solicitarVoto() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Voto del Elector");
+        builder.setMessage("Ingrese el voto del elector (1, 2 o 3):");
+
+        final EditText input = new EditText(this);
+        builder.setView(input);
+
+        builder.setPositiveButton("Aceptar", (dialog, which) -> {
+            int voto = Integer.parseInt(input.getText().toString());
+            switch (voto) {
+                case 1:
+                    votosCandidato1++;
+                    break;
+                case 2:
+                    votosCandidato2++;
+                    break;
+                case 3:
+                    votosCandidato3++;
+                    break;
+                default:
+                    mostrarMensaje("Voto inválido.");
+                    break;
+            }
+
+            if (electoresRestantes > 0) {
+                solicitarEdad();
+            } else {
+                mostrarResultado();
+            }
+        });
+
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    private int determinarGanador() {
+        int maxVotos = Math.max(votosCandidato1, Math.max(votosCandidato2, votosCandidato3));
+        if (maxVotos == votosCandidato1) {
+            return 1;
+        } else if (maxVotos == votosCandidato2) {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
+
+    private int obtenerVotos(int candidato) {
+        switch (candidato) {
+            case 1:
+                return votosCandidato1;
+            case 2:
+                return votosCandidato2;
+            case 3:
+                return votosCandidato3;
+            default:
+                return 0;
+        }
+    }
+
+    private void mostrarResultado() {
+        int candidatoGanador = determinarGanador();
+        String mensajeResultado = "El Candidato #" + candidatoGanador + " es elegido con " + obtenerVotos(candidatoGanador) + " votos.";
+        textViewResultado.setText(mensajeResultado);
     }
 }
