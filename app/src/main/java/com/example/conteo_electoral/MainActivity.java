@@ -3,6 +3,7 @@ package com.example.conteo_electoral;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewResultado;
     private int votosCandidato1, votosCandidato2, votosCandidato3;
     private int electoresRestantes;
+    private final Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,17 +40,12 @@ public class MainActivity extends AppCompatActivity {
         ingresarEdades(numElectores);
     }
 
-    //Metodo para convertir edad a entero
-    public void iniciarIngresoEdades(View view) {
-        int numElectores = Integer.parseInt(editTextElectores.getText().toString());
-        ingresarEdades(numElectores);
-    }
-
     //Metodo para ingresar las edades ya convertidas a entero
     private void ingresarEdades(int numElectores) {
         electoresRestantes = numElectores;
         solicitarEdad();
     }
+
 
     //Metodo donde se solicita edad
     private void solicitarEdad() {
@@ -64,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
             if (edad < 18) {
                 mostrarMensaje("El elector es menor de edad.");
+
+                handler.postDelayed(() -> solicitarEdad(), 1000);
             } else {
                 electoresRestantes--;
                 solicitarVoto();
